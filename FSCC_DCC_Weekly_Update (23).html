@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FSCC+DCC+Resilience Weekly Update</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.3.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f1f3f6;font-family:Calibri,Arial,sans-serif;color:#0b1f3a}
+header{background:#0b1f3a;color:#fff;padding:10px 24px;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px}
+main{padding:14px;max-width:1400px;margin:auto}
+.g{display:grid;gap:12px;margin-bottom:12px}.g4{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.g2{grid-template-columns:.85fr 1.5fr}
+@media(max-width:800px){.g2{grid-template-columns:1fr}}
+.c{background:#fff;border:1px solid #d5dae3;border-radius:10px;padding:12px}
+h3{margin:0 0 8px;font-size:15px}
+.cv{position:relative;height:200px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+th,td{border:1px solid #e6e9ef;padding:3px 6px;text-align:left}th{background:#f4f6fa;color:#5b6573}
+td[contenteditable]:focus,[contenteditable]:focus{outline:2px solid #2874f0;background:#eef5ff}
+.cr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.b{border:1px solid;border-radius:10px;padding:10px;min-height:150px}
+.b .n{font-size:36px;font-weight:700;line-height:1.1}.b .t{font-weight:700;font-size:14px}.b .d{font-size:12px;margin-top:6px}
+.map{border:2px dashed #9aa3b2;border-radius:10px;background:#f9fafc;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:240px;text-align:center}
+.note{font-size:12px;margin-top:8px;line-height:1.6}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.k{background:#1f2937;border:2px solid #f5a623;border-radius:10px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 10px;font-size:14px;white-space:nowrap}
+.k .r{display:flex;align-items:center;gap:8px}.k .s{font-size:11px;color:#cbd5e1}
+.k i{font-size:24px}.k b{color:#f97316;font-size:20px;font-weight:700}
+.cs{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:10px}
+.cs div{border-radius:8px;padding:8px 10px;background:#f4f6fa}.cs small{display:block;font-size:11px;color:#5b6573}.cs b{font-size:22px}.cs em{font-style:normal;font-size:12px;font-weight:700;margin-left:6px}
+.lgd{display:flex;gap:14px;font-size:12px;color:#5b6573;margin-bottom:8px;flex-wrap:wrap}.lgd i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
+.ni{background:repeating-linear-gradient(45deg,#b4b2a9,#b4b2a9 3px,#d3d1c7 3px,#d3d1c7 6px)}
+.rw{display:grid;grid-template-columns:56px 1fr 120px;gap:12px;align-items:center;padding:8px 0;border-top:1px solid #e6e9ef}
+.rw .nm{font-weight:700;font-size:16px}.bar{display:flex;height:26px;border-radius:6px;overflow:hidden;background:#eee}
+.bar span{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;min-width:2px}
+.st{font-size:12px;color:#5b6573;margin-top:4px;display:flex;gap:12px;flex-wrap:wrap}.st b{color:#0b1f3a}
+.pc{text-align:right;line-height:1.2}.pc b{font-size:22px;color:#2874f0}.pc small{display:block;font-size:12px;color:#e34948;font-weight:700}
+.ed{margin-top:8px;font-size:12px}.ed summary{cursor:pointer;color:#2874f0}
+@media(max-width:700px){.rw{grid-template-columns:1fr}.pc{text-align:left}}
+.vb{display:flex;gap:12px;align-items:flex-end;height:200px;margin-top:6px}
+.vc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.vc b{font-size:16px;margin-bottom:3px}.vbar{width:100%;max-width:56px;background:#2874f0;border-radius:6px 6px 0 0;min-height:3px}
+.vc span{font-weight:700;margin-top:6px;font-size:13px}.vc small{font-size:11px;color:#5b6573}
+.fb{display:inline-block;font-size:12px;color:#2874f0;border:1px solid #2874f0;border-radius:8px;padding:4px 12px;cursor:pointer;background:#fff;margin:0 4px}
+@media print{.fb{display:none!important}}
+.lg2{cursor:pointer;display:flex;align-items:center}#lg-ph{font-size:12px;font-weight:400;border:1px dashed #cbd5e1;border-radius:8px;padding:4px 12px;color:#cbd5e1}
+@media print{#lg-ph{display:none!important}}
+#nt-txt{width:100%;font:13px Calibri,Arial,sans-serif;border:1px solid #d5dae3;border-radius:8px;padding:8px;resize:vertical;color:#0b1f3a}
+#nt-txt:focus{outline:2px solid #2874f0}
+#nt-map{min-height:120px;text-align:center;font-size:12px;color:#5b6573}
+#nt-map svg{max-height:560px}
+#nt-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.nc{font-size:12px;border-radius:8px;padding:3px 10px;border:1px solid;background:#fff}
+.gr{grid-template-columns:1.7fr 1fr}
+@media(max-width:900px){.gr{grid-template-columns:1fr}}
+#shot{max-width:1280px;margin:auto;background:#f1f3f6}
+main{max-width:none;padding:8px}
+.tb{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#5b6573;margin:0 0 6px}
+.g{gap:8px;margin-bottom:8px}.c{padding:8px 10px}.gr{margin-bottom:8px}
+header{min-height:46px;padding:6px 16px;font-size:20px}
+.kpi{gap:6px;margin-bottom:6px}.k{padding:4px 8px;font-size:13px}.k b{font-size:17px}.k i{font-size:20px}.k .s{font-size:10px}
+h3{margin:0 0 5px;font-size:14px}
+.cs{gap:6px;margin-bottom:5px}.cs div{padding:4px 8px}.cs b{font-size:18px}.cs small{font-size:10px}
+.lgd{margin-bottom:3px;font-size:11px}
+.rw{padding:4px 0;gap:10px}.bar{height:20px}.st{margin-top:2px;font-size:11px}.pc b{font-size:18px}.rw .nm{font-size:15px}
+.vb{height:130px}.cv{height:150px!important}.vc b{font-size:14px}
+.note{margin-top:4px}
+.b{min-height:96px;padding:8px}.b .n{font-size:30px}
+.ntw{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+@media(max-width:700px){.ntw{grid-template-columns:1fr}}
+#nt-map svg{max-height:290px}#nt-txt{height:84px}
+#ft{padding:6px!important;margin-top:8px!important}#ft-img{max-height:60px;width:auto}
+@media(max-width:900px){#shot{max-width:none}}
+.lay{display:grid;grid-template-columns:1.45fr .75fr 1.2fr;gap:8px;margin-bottom:8px;align-items:stretch}
+.col{display:grid;gap:8px;min-width:0}.col.two{grid-template-rows:1fr 1fr}.col.c3{grid-template-rows:1fr auto}
+.col .c{margin:0;display:flex;flex-direction:column;min-width:0}
+#cctv-rows,#ids-rows{flex:1;display:flex;flex-direction:column;justify-content:space-evenly}
+.col .cv{flex:1 1 auto;height:auto!important;min-height:120px}
+.vb{flex:1;min-height:120px;height:auto}
+.ntw{grid-template-columns:1fr!important}
+#nt{min-height:0}#nt-map svg{max-height:340px;width:100%}#nt-txt{height:88px}
+.cr3{display:grid}
+.col.c3 .b{min-height:84px;padding:6px}.col.c3 .b .n{font-size:26px}.col.c3 .b .d{font-size:11px}
+#ft-img{max-height:70px}
+@media(max-width:1000px){.lay{grid-template-columns:1fr}.col.two,.col.c3{grid-template-rows:none}}
+#cctv-sum,#ids-sum{grid-template-columns:repeat(5,1fr)!important}
+#cctv-sum div,#ids-sum div{padding:4px 6px}#cctv-sum b,#ids-sum b{font-size:17px}
+.st{font-size:10.5px;gap:8px}
+.rw{grid-template-columns:44px 1fr 100px}
+#ft{padding:4px!important;margin-top:0!important}#ft-ph{padding:6px 0!important}
+.mapwrap{position:relative}
+.mlg{position:absolute;right:0;bottom:8px;background:rgba(255,255,255,.92);border:1px solid #e6e9ef;border-radius:8px;padding:6px 8px;font-size:11px;display:flex;flex-direction:column;gap:4px;z-index:2;color:#0b1f3a}
+.mlg span{display:flex;align-items:center;gap:6px;white-space:nowrap}.mlg i{width:10px;height:10px;border-radius:2px;display:inline-block}
+#nt-map svg{max-height:390px!important;width:100%;display:block;margin:0 auto}
+#nt-map{min-height:0}#nt-txt{height:76px!important}
+.col.c3{grid-template-rows:auto auto}.col.c3 #nt{flex:1}
+.cs b[contenteditable]{font-size:15px!important;white-space:nowrap}
+#shot{max-width:none!important}
+.lay{grid-template-columns:1.3fr .8fr 1.4fr}
+.ntw{grid-template-columns:.8fr 1.2fr!important;align-items:stretch}
+#nt-txt{height:150px!important}#nt-map svg{max-height:none!important}
+.hl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.hb{border:2px solid;border-radius:14px;padding:6px 12px}.hb h4{margin:0 0 4px;font-size:14px;text-align:center}
+.hb ol{margin:0;padding-left:22px;columns:2;column-gap:28px;font-size:12px;line-height:1.55}
+@media(max-width:1000px){.lay{grid-template-columns:1fr}.ntw{grid-template-columns:1fr!important}.hl{grid-template-columns:1fr}.hb ol{columns:1}}
+.lay2{display:grid;grid-template-columns:1.45fr .8fr 1.5fr;grid-template-rows:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:stretch}
+.lay2>.c{margin:0;display:flex;flex-direction:column;min-width:0}
+.a-cctv{grid-column:1;grid-row:1}.a-audit{grid-column:2;grid-row:1}.a-ids{grid-column:1;grid-row:2}.a-trav{grid-column:2;grid-row:2}
+.hl.a-hl{grid-column:1/3;grid-row:3;display:flex;flex-direction:column;gap:8px;margin:0}
+.a-c3{grid-column:3;grid-row:1/4;display:grid;grid-template-rows:1fr auto;gap:8px;min-width:0}
+.a-c3 #nt{flex:1}
+.ntw{grid-template-columns:.62fr 1.38fr!important}
+#nt-txt{height:170px!important}
+.a-c3 .b{min-height:112px;padding:10px 12px}.a-c3 .b .n{font-size:32px}.a-c3 .b .d{font-size:12px;margin-top:8px}.a-c3 .b .t{font-size:14px}
+.a-c3>.c:last-child{padding:12px}
+@media(max-width:1000px){.lay2{grid-template-columns:1fr;grid-template-rows:none}.lay2>*{grid-column:1!important;grid-row:auto!important}.ntw{grid-template-columns:1fr!important}}
+.rt{display:inline-block;margin-left:8px;font-size:11px;font-weight:700;color:#0f6e56;background:#e1f5ee;border:1px solid #1d9e75;border-radius:10px;padding:1px 9px;vertical-align:1px}
+header{background:#2874f0!important;border-bottom:5px solid #ffe500;letter-spacing:.2px}
+header span[contenteditable]{font-weight:800;font-style:italic}
+.c{border-top:3px solid #2874f0!important}#ft{border-top:1px solid #d5dae3!important}
+h3{color:#172337}
+.k{background:#2874f0!important;border:2px solid #ffe500!important;color:#fff}
+.k b{color:#ffe500!important}.k .s{color:#dbe7ff!important}.k i{color:#fff}
+.cs div[style*="background:#0b1f3a"]{background:#2874f0!important}
+.cs div[style*="background:#2874f0"] small{color:#dbe7ff!important}
+.cs div[style*="background:#e6f1fb"]{background:#eaf1ff!important}
+.rt{color:#172337!important;background:#ffe500!important;border-color:#f2c200!important}
+.fb{color:#2874f0;border-color:#2874f0}
+#lg-ph{border-color:#ffe500!important;color:#ffe500!important}
+header{background:linear-gradient(90deg,#0f1c33 0%,#1b3f8f 60%,#2874f0 100%)!important;box-shadow:0 3px 8px rgba(15,28,51,.35)}
+.kpi{gap:10px;margin-bottom:12px}
+.k{background:linear-gradient(180deg,#5a9bff 0%,#2874f0 50%,#1b57c0 100%)!important;border:2px solid #ffe500!important;border-radius:12px;
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.45),inset 0 -3px 0 rgba(0,0,0,.18),0 5px 0 #14408f,0 9px 12px rgba(20,64,143,.35);
+ text-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .15s,box-shadow .15s}
+.k:hover{transform:translateY(-2px)}
+.k b{text-shadow:0 2px 3px rgba(0,0,0,.4)}
+.k{background:linear-gradient(180deg,#46536b 0%,#232f45 45%,#131c2e 100%)!important;border:2px solid #ffb400!important;
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.25),inset 0 -3px 0 rgba(0,0,0,.35),0 5px 0 #070c16,0 9px 12px rgba(7,12,22,.4)!important}
+.k b{color:#ffb400!important}.k .s{color:#cbd5e1!important}
+.lay2{grid-template-columns:1.4fr .75fr 1.65fr!important}
+.ntw{grid-template-columns:.4fr 1.6fr!important}
+#nt-txt{height:140px!important}
+.mlg{font-size:12px;padding:8px 10px;gap:5px}.mlg b{font-size:12px}
+.k{border:2px solid rgba(255,255,255,.8)!important;color:#fff!important}
+.k b{color:#fff!important;text-shadow:0 2px 3px rgba(0,0,0,.4)}.k .s{color:rgba(255,255,255,.9)!important}
+.kpi .k:nth-child(1){background:linear-gradient(180deg,#ff9a5a,#fb641b 50%,#d94e0a)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.18),0 5px 0 #8f3305,0 9px 12px rgba(0,0,0,.3)!important}
+.kpi .k:nth-child(2){background:linear-gradient(180deg,#a278f0,#7b3fe4 50%,#5a28b3)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.18),0 5px 0 #371a70,0 9px 12px rgba(0,0,0,.3)!important}
+.kpi .k:nth-child(3){background:linear-gradient(180deg,#52c46a,#26a541 50%,#1b7d2f)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.18),0 5px 0 #0f4d1c,0 9px 12px rgba(0,0,0,.3)!important}
+.kpi .k:nth-child(4){background:linear-gradient(180deg,#35c2d1,#0097a7 50%,#00717d)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.18),0 5px 0 #004750,0 9px 12px rgba(0,0,0,.3)!important}
+.kpi .k:nth-child(5){background:linear-gradient(180deg,#ee6fa0,#d81b60 50%,#a8124a)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.18),0 5px 0 #680a2d,0 9px 12px rgba(0,0,0,.3)!important}
+.kpi .k:nth-child(6){background:linear-gradient(180deg,#ffd04d,#f9a825 50%,#d98a00)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 0 rgba(0,0,0,.15),0 5px 0 #7d4d00,0 9px 12px rgba(0,0,0,.3)!important;color:#2e1d00!important}
+.kpi .k:nth-child(6) b{color:#2e1d00!important;text-shadow:none}.kpi .k:nth-child(6) .s{color:#4a3000!important}
+.kpi .k:nth-child(7){background:linear-gradient(180deg,#ff7a75,#e53935 50%,#b71c1c)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.18),0 5px 0 #6f0f0f,0 9px 12px rgba(0,0,0,.3)!important}
+.a-c3{display:contents!important}
+.a-c3>#nt{grid-column:3;grid-row:1/3;margin:0;min-width:0;display:flex;flex-direction:column}
+.a-c3>.c:last-child{grid-column:3;grid-row:3;margin:0;min-width:0;display:flex;flex-direction:column}
+.a-c3>.c:last-child .cr{flex:1}
+.a-c3>.c:last-child .b{min-height:0}
+.a-trav .cv{min-height:200px}
+#ids-rows .bar{height:32px}#ids-rows .rw .nm{font-size:18px}#ids-rows .pc b{font-size:24px}#ids-rows .st{font-size:12px}
+@media(max-width:1000px){.a-c3>#nt,.a-c3>.c:last-child{grid-column:1!important;grid-row:auto!important}}
+#cctv-sum,#ids-sum{grid-template-columns:repeat(4,1fr)!important}
+.hl.a-hl{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;flex-direction:row}
+.hl.a-hl .hb ol{columns:1}
+.kpi .k:nth-child(n){background:linear-gradient(180deg,#ffffff,#f1f5fc)!important;border:1px solid #d5dae3!important;border-top:4px solid #2874f0!important;border-bottom:6px solid #c3cfe6!important;color:#172337!important;text-shadow:none!important;box-shadow:0 8px 12px rgba(23,35,55,.14)!important}
+.kpi .k:nth-child(n) b{color:#172337!important;text-shadow:none!important;font-size:22px}
+.kpi .k:nth-child(n) i{color:#2874f0!important}
+.kpi .k:nth-child(n) .s{color:#5b6573!important}
+.kpi .k:nth-child(n) .s{font-weight:700!important;font-size:11px!important;padding:1px 10px;border-radius:10px;display:inline-block;margin-top:2px}
+.kpi .k:nth-child(n) .s.asof{background:#ffe500!important;color:#172337!important}
+.kpi .k:nth-child(n) .s.rng{background:#e3edff!important;color:#1b57c0!important;border:1px solid #9dbcf5}
+.kpi .k:nth-child(n) .s.rtm{background:#d7f3df!important;color:#0f6e2f!important;border:1px solid #7fcf98}
+.mp{position:absolute;top:0;width:31%;min-width:128px;background:rgba(255,255,255,.95);border:1px solid #d5dae3;border-radius:8px;padding:5px 8px 6px;z-index:3;color:#172337}
+.mp-l{left:0;border-top:3px solid #e53935}.mp-r{right:0;border-top:3px solid #f2c200}
+.mp h5{margin:0 0 3px;font-size:11.5px;font-weight:800;line-height:1.25}
+.mp ul{margin:0;padding-left:15px;font-size:11px;line-height:1.4}.mp li{margin-bottom:1px}
+.mp ul:focus{outline:2px solid #2874f0}
+.ntw{display:block!important;position:relative;flex:1;min-height:580px}
+.ntw>.mapwrap{position:absolute;left:0;right:0;top:0;bottom:0}
+#nt-map{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;min-height:0}
+#nt-map svg{height:100%!important;width:100%!important;max-height:none!important}
+#nt-txt{height:84px!important}
+#nt-list{margin-top:6px}
+#nt-txt{height:62px!important;font-size:12px!important;padding:5px 6px!important}
+#nt-list{margin-top:4px;gap:4px}.nc{font-size:11px;padding:2px 8px}
+.mprow{position:absolute;left:0;right:0;top:14px;display:flex;justify-content:space-between;align-items:stretch;gap:12px;z-index:3}
+.mprow .mp{position:static;width:32%;min-width:130px}
+.ntw{margin-top:10px}
+#nt-map{top:92px!important}
+#nt-map{left:22%!important;top:84px!important;bottom:2px!important}
+.mlg{font-size:12.5px!important;padding:8px 12px!important;gap:6px!important;border:1px solid #9aa3b2!important;box-shadow:0 2px 8px rgba(23,35,55,.18);background:#fff!important;z-index:6!important}
+.mlg b{font-size:12.5px!important}.mlg i{width:13px!important;height:13px!important;border-radius:3px!important}
+.ntw{min-height:660px!important}
+#nt-map{left:20%!important;top:24px!important;bottom:0!important}
+.rmr{border:1px solid #e34948;color:#e34948;background:#fff;border-radius:6px;width:24px;height:24px;cursor:pointer;line-height:1;padding:0;font-size:15px}
+.rmr:hover{background:#fdecec}
+.addr{margin-top:6px;font-size:12px;color:#2874f0;border:1px dashed #2874f0;background:#fff;border-radius:8px;padding:3px 12px;cursor:pointer}
+.addr:hover{background:#eaf1ff}
+.ed td:last-child,.ed th:last-child{width:34px;text-align:center}
+#nt-map{left:0!important}
+.kpi .k:nth-child(n) .s{font-size:14px!important;padding:2px 12px!important;margin-top:3px}
+.mp h5{font-size:15px!important;margin-bottom:4px!important}
+.mp ul{font-size:14px!important;line-height:1.45!important;padding-left:18px!important}
+.mprow .mp{width:35%!important;padding:7px 10px 8px!important}
+#shot[data-fs="L"] .kpi .k{font-size:15.6px!important}
+#shot[data-fs="L"] .kpi .k i{font-size:24.0px!important}
+#shot[data-fs="L"] .kpi .k:nth-child(n) b{font-size:26.4px!important}
+#shot[data-fs="L"] .kpi .k:nth-child(n) .s{font-size:16.8px!important}
+#shot[data-fs="L"] .c h3{font-size:16.8px!important}
+#shot[data-fs="L"] .rt{font-size:13.2px!important}
+#shot[data-fs="L"] .cs small{font-size:12.0px!important}
+#shot[data-fs="L"] .cs b{font-size:21.6px!important}
+#shot[data-fs="L"] .cs em{font-size:14.4px!important}
+#shot[data-fs="L"] .lgd{font-size:13.2px!important}
+#shot[data-fs="L"] .rw .nm{font-size:18.0px!important}
+#shot[data-fs="L"] .st{font-size:12.6px!important}
+#shot[data-fs="L"] .pc{font-size:16.8px!important}
+#shot[data-fs="L"] .pc b{font-size:21.6px!important}
+#shot[data-fs="L"] .pc small{font-size:14.4px!important}
+#shot[data-fs="L"] .vc b{font-size:16.8px!important}
+#shot[data-fs="L"] .vc span{font-size:15.6px!important}
+#shot[data-fs="L"] .vc small{font-size:13.2px!important}
+#shot[data-fs="L"] .note{font-size:14.4px!important}
+#shot[data-fs="L"] .b .t{font-size:16.8px!important}
+#shot[data-fs="L"] .b .n{font-size:38.4px!important}
+#shot[data-fs="L"] .b .d{font-size:14.4px!important}
+#shot[data-fs="L"] .hb h4{font-size:16.8px!important}
+#shot[data-fs="L"] .hb ol{font-size:14.4px!important}
+#shot[data-fs="L"] .mp h5{font-size:18.0px!important}
+#shot[data-fs="L"] .mp ul{font-size:16.8px!important}
+#shot[data-fs="L"] .mlg{font-size:15.0px!important}
+#shot[data-fs="L"] .mlg b{font-size:15.0px!important}
+#shot[data-fs="L"] #ids-rows .rw .nm{font-size:21.6px!important}
+#shot[data-fs="L"] #ids-rows .pc b{font-size:28.8px!important}
+#shot[data-fs="L"] #ids-rows .st{font-size:14.4px!important}
+#shot[data-fs="L"] #cctv-sum b,#shot[data-fs="L"] #ids-sum b{font-size:20.4px!important}
+#shot[data-fs="L"] .cs b[contenteditable]{font-size:18.0px!important}
+#shot[data-fs="XL"] .kpi .k{font-size:18.2px!important}
+#shot[data-fs="XL"] .kpi .k i{font-size:28.0px!important}
+#shot[data-fs="XL"] .kpi .k:nth-child(n) b{font-size:30.8px!important}
+#shot[data-fs="XL"] .kpi .k:nth-child(n) .s{font-size:19.6px!important}
+#shot[data-fs="XL"] .c h3{font-size:19.6px!important}
+#shot[data-fs="XL"] .rt{font-size:15.4px!important}
+#shot[data-fs="XL"] .cs small{font-size:14.0px!important}
+#shot[data-fs="XL"] .cs b{font-size:25.2px!important}
+#shot[data-fs="XL"] .cs em{font-size:16.8px!important}
+#shot[data-fs="XL"] .lgd{font-size:15.4px!important}
+#shot[data-fs="XL"] .rw .nm{font-size:21.0px!important}
+#shot[data-fs="XL"] .st{font-size:14.7px!important}
+#shot[data-fs="XL"] .pc{font-size:19.6px!important}
+#shot[data-fs="XL"] .pc b{font-size:25.2px!important}
+#shot[data-fs="XL"] .pc small{font-size:16.8px!important}
+#shot[data-fs="XL"] .vc b{font-size:19.6px!important}
+#shot[data-fs="XL"] .vc span{font-size:18.2px!important}
+#shot[data-fs="XL"] .vc small{font-size:15.4px!important}
+#shot[data-fs="XL"] .note{font-size:16.8px!important}
+#shot[data-fs="XL"] .b .t{font-size:19.6px!important}
+#shot[data-fs="XL"] .b .n{font-size:44.8px!important}
+#shot[data-fs="XL"] .b .d{font-size:16.8px!important}
+#shot[data-fs="XL"] .hb h4{font-size:19.6px!important}
+#shot[data-fs="XL"] .hb ol{font-size:16.8px!important}
+#shot[data-fs="XL"] .mp h5{font-size:21.0px!important}
+#shot[data-fs="XL"] .mp ul{font-size:19.6px!important}
+#shot[data-fs="XL"] .mlg{font-size:17.5px!important}
+#shot[data-fs="XL"] .mlg b{font-size:17.5px!important}
+#shot[data-fs="XL"] #ids-rows .rw .nm{font-size:25.2px!important}
+#shot[data-fs="XL"] #ids-rows .pc b{font-size:33.6px!important}
+#shot[data-fs="XL"] #ids-rows .st{font-size:16.8px!important}
+#shot[data-fs="XL"] #cctv-sum b,#shot[data-fs="XL"] #ids-sum b{font-size:23.8px!important}
+#shot[data-fs="XL"] .cs b[contenteditable]{font-size:21.0px!important}
+.ntw{display:flex!important;flex-direction:column;min-height:0!important;flex:1}
+.mprow{position:static!important;margin:6px 0 10px!important;width:auto}
+.ntw>.mapwrap{position:relative!important;flex:1;min-height:560px;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important}
+#nt-map{top:0!important;left:0!important;bottom:0!important;right:0!important}
+.ctl{font-size:12px;color:#172337;display:flex;align-items:center;gap:6px}
+.ctl .fb{padding:2px 10px;margin:0}.ctl select{font-size:12px;border:1px solid #2874f0;border-radius:8px;padding:3px 6px;color:#172337;background:#fff}
+.rw{grid-template-columns:66px 1fr 100px!important}
+#shot[data-fs="L"] .rw{grid-template-columns:80px 1fr 112px!important}
+#shot[data-fs="XL"] .rw{grid-template-columns:96px 1fr 124px!important}
+</style></head><body>
+<div id="shot">
+<header><span contenteditable>FSCC+DCC+Resilience Weekly Update</span><label class="lg2" title="Click to upload or change logo"><img id="lg-img" alt="Logo" style="display:none;height:40px;width:auto"><span id="lg-ph">Upload logo</span><input type="file" id="lg-file" accept="image/*" hidden></label></header>
+<main>
+<div class="kpi">
+ <div class="k"><div class="r"><i class="ti ti-user-plus" aria-hidden="true"></i><span contenteditable>FK SOS Users</span> <b contenteditable>1250</b></div><div class="s asof" contenteditable>As of today</div></div>
+ <div class="k"><div class="r"><i class="ti ti-phone-incoming" aria-hidden="true"></i><span contenteditable>FK SOS Alerts</span> <b contenteditable>38</b></div><div class="s rng" contenteditable>07 Oct - 15 Oct</div></div>
+ <div class="k"><div class="r"><i class="ti ti-speakerphone" aria-hidden="true"></i><span contenteditable>Notifications</span> <b contenteditable>640</b></div><div class="s rng" contenteditable>07 Oct - 15 Oct</div></div>
+ <div class="k"><div class="r"><i class="ti ti-headset" aria-hidden="true"></i><span contenteditable>CMT Calls</span> <b contenteditable>52</b></div><div class="s rng" contenteditable>07 Oct - 15 Oct</div></div>
+ <div class="k"><div class="r"><i class="ti ti-moon" aria-hidden="true"></i><span contenteditable>Silent Hr Alarms</span> <b contenteditable>7</b></div><div class="s rng" contenteditable>07 Oct - 15 Oct</div></div>
+ <div class="k"><div class="r"><i class="ti ti-tools" aria-hidden="true"></i><span contenteditable>AMC Calls</span> <b contenteditable>15</b></div><div class="s rng" contenteditable>07 Oct - 15 Oct</div></div>
+ <div class="k"><div class="r"><i class="ti ti-phone-call" aria-hidden="true"></i><span contenteditable>ISOS SOS Alerts</span> <b contenteditable>0</b></div><div class="s asof" contenteditable>As of today</div></div>
+</div>
+<div class="tb"><span>Edit any number or text directly. Charts update as you type.</span><span class="ctl">Text size <button class="fb" id="fs-" title="Smaller text">A&minus;</button><button class="fb" id="fs+" title="Larger text">A+</button> <span id="fs-l">Normal</span> &nbsp; Color <select id="theme"><option value="blue">Flipkart blue</option><option value="green">Emerald</option><option value="purple">Royal purple</option><option value="orange">Sunset orange</option><option value="grey">Charcoal</option></select></span><span><button class="fb" id="b-copy">Copy image</button><button class="fb" id="b-dl">Download PNG</button></span></div>
+<div class="lay2">
+<div class="c a-cctv"><h3>CCTV coverage and uptime <span class="rt asof" contenteditable>As of today</span></h3>
+ <div id="cctv-sum" class="cs"></div>
+ <div class="lgd"><span><i style="background:#2874f0"></i>Online</span><span><i style="background:#e34948"></i>Offline</span><span><i class="ni"></i>Not integrated</span><span style="margin-left:auto">Online and offline % = share of integrated sites</span></div>
+ <div id="cctv-rows"></div>
+ <details class="ed"><summary>Edit CCTV data</summary>
+  <table id="t-cctv"><thead><tr><th>LoB</th><th>Scope</th><th>Not integrated</th><th>Online</th><th>Offline</th></tr></thead><tbody>
+  <tr><td contenteditable>DH</td><td contenteditable>120</td><td contenteditable>0</td><td contenteditable>114</td><td contenteditable>6</td></tr>
+  <tr><td contenteditable>LML</td><td contenteditable>80</td><td contenteditable>0</td><td contenteditable>76</td><td contenteditable>4</td></tr>
+  <tr><td contenteditable>Minutes</td><td contenteditable>45</td><td contenteditable>0</td><td contenteditable>43</td><td contenteditable>2</td></tr>
+  <tr><td contenteditable>Captive</td><td contenteditable>60</td><td contenteditable>0</td><td contenteditable>57</td><td contenteditable>3</td></tr></tbody></table>
+  <div style="font-size:11px;color:#5b6573;margin-top:4px">Online % and offline % are shares of integrated sites (online + offline). Not integrated % is the share of scope.</div></details>
+</div>
+<div class="c a-audit"><h3>Virtual audit by zone</h3>
+  <div class="cs" style="grid-template-columns:1fr 1fr"><div id="au-total" style="background:#0b1f3a;color:#fff"></div><div style="background:#e6f1fb"><small>Period (click to edit)</small><b contenteditable style="color:#2874f0;font-size:18px">07 Oct - 16 Oct</b></div></div>
+  <div id="au-bars" class="vb"></div>
+  <div class="note"><b style="color:#e34948">Top 3 non-compliance:</b> <span contenteditable>Hub A, Hub B, Hub C</span><br><b style="color:#1baf7a">Action taken:</b> <span contenteditable>Hub X, Hub Y, Hub Z</span></div>
+  <details class="ed"><summary>Edit audit data</summary>
+  <table id="t-audit"><thead><tr><th>Zone</th><th>Count</th></tr></thead><tbody>
+  <tr><td contenteditable>East</td><td contenteditable>12</td></tr>
+  <tr><td contenteditable>West</td><td contenteditable>9</td></tr>
+  <tr><td contenteditable>North</td><td contenteditable>11</td></tr>
+  <tr><td contenteditable>South</td><td contenteditable>8</td></tr></tbody></table></details></div>
+<div class="c a-ids"><h3>IDS coverage and uptime <span class="rt asof" contenteditable>As of today</span></h3>
+ <div id="ids-sum" class="cs"></div>
+ <div class="lgd"><span><i style="background:#2874f0"></i>Online</span><span><i style="background:#e34948"></i>Offline</span><span><i class="ni"></i>Not integrated</span><span style="margin-left:auto">Online and offline % = share of integrated sites</span></div>
+ <div id="ids-rows"></div>
+ <details class="ed"><summary>Edit IDS data</summary>
+  <table id="t-ids"><thead><tr><th>LoB</th><th>Scope</th><th>Not integrated</th><th>Online</th><th>Offline</th></tr></thead><tbody>
+  <tr><td contenteditable>LM</td><td contenteditable>90</td><td contenteditable>0</td><td contenteditable>85</td><td contenteditable>5</td></tr>
+  <tr><td contenteditable>LML</td><td contenteditable>60</td><td contenteditable>0</td><td contenteditable>58</td><td contenteditable>2</td></tr></tbody></table>
+  <div style="font-size:11px;color:#5b6573;margin-top:4px">Online % and offline % are shares of integrated sites (online + offline). Not integrated % is the share of scope.</div></details>
+</div>
+<div class="c a-trav"><h3>International travellers</h3>
+  <div class="cs" style="grid-template-columns:1fr 1fr"><div id="tr-total" style="background:#0b1f3a;color:#fff"></div><div style="background:#e6f1fb"><small>Period (click to edit)</small><b class="asof" contenteditable style="color:#2874f0;font-size:18px">As of today</b></div></div><div class="cv"><canvas id="cv-trav"></canvas></div>
+  <details class="ed"><summary>Edit travellers data</summary>
+  <table id="t-trav"><thead><tr><th>Country</th><th>Employees</th></tr></thead><tbody>
+  <tr><td contenteditable>Singapore</td><td contenteditable>4</td></tr>
+  <tr><td contenteditable>Germany</td><td contenteditable>3</td></tr>
+  <tr><td contenteditable>China</td><td contenteditable>2</td></tr>
+  <tr><td contenteditable>Nepal</td><td contenteditable>1</td></tr></tbody></table></details></div>
+<div class="hl a-hl">
+ <div class="hb" style="background:#eaf3de;border-color:#3b6d11;color:#27500a"><h4 contenteditable>Major Highlights: Completed</h4><ol contenteditable>
+  <li>FSCC Infra Upgrade F&amp;I Visit</li><li>Weekly update Protocol restarted</li><li>IIRIS connect for Staffing</li><li>Location Code data</li></ol></div>
+ <div class="hb" style="background:#fff9d6;border-color:#f2c200;color:#6b5400"><h4 contenteditable>Major Highlights: WIP</h4><ol contenteditable>
+  <li>Trng Video</li><li>Hub CCTV audit closure</li><li>SOP refresh - North zone</li><li>Vendor review - AMC</li></ol></div>
+</div>
+<div class="col c3 a-c3">
+<div class="c" id="nt"><h3>Major Events/Notifications</h3>
+  <div class="ntw"><div class="mprow"><div class="mp mp-l"><h5>Major events: last week</h5><ul contenteditable><li>Punjab: Bandh and farmer protest</li><li>Karnataka: Hub fire, short circuit</li></ul></div><div class="mp mp-r"><h5>In process / upcoming major events</h5><ul contenteditable><li>Delhi: VIP movement, traffic diversion</li><li>Gujarat: Hub audit</li></ul></div></div><div class="mapwrap"><div id="nt-map"></div><div class="mlg"><b>Region key</b><span><i style="background:#26a541"></i>East</span><span><i style="background:#fb641b"></i>West</span><span><i style="background:#7b3fe4"></i>South</span><span><i style="background:#2874f0"></i>North</span></div></div></div></div>
+<div class="c"><h3>Code Red</h3><div class="cr">
+  <div class="b" style="background:#fdecec;border-color:#e34948;color:#a32d2d"><div class="t" contenteditable>Death</div><div class="n" contenteditable>2</div><div class="d" contenteditable>Rider fatal accident<br>WM met with an accident</div></div>
+  <div class="b" style="background:#fdf3dc;border-color:#ef9f27;color:#854f0b"><div class="t" contenteditable>Fire</div><div class="n" contenteditable>1</div><div class="d" contenteditable>Karnataka hub, short circuit</div></div>
+  <div class="b" style="background:#e6f1fb;border-color:#2874f0;color:#185fa5"><div class="t" contenteditable>BD &gt; 24 hrs</div><div class="n" contenteditable>2</div><div class="d" contenteditable>Punjab Bandh<br>Farmer protest</div></div>
+ </div></div>
+</div>
+</div>
+<div class="c" id="ft" style="margin-top:12px;text-align:center">
+ <img id="ft-img" alt="Footer image" style="display:none;max-width:100%;height:auto;margin:auto">
+ <div id="ft-ph" style="color:#5b6573;font-size:12px;padding:14px 0">No footer image yet. Upload your logo strip.</div>
+ <label class="fb">Upload footer image<input type="file" id="ft-file" accept="image/*" hidden></label>
+ <button class="fb" id="ft-rm" style="display:none">Remove</button>
+</div>
+</main>
+</div>
+<script>
+const BL='#2874f0',RD='#e34948',AQ='#1baf7a';
+const rows=id=>[...document.querySelectorAll('#t-'+id+' tbody tr')].map(r=>[...r.cells].map(c=>c.textContent.trim()));
+const n=v=>parseFloat(v)||0;
+const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+const pct=(a,b)=>(a+b)?Math.round(a/(a+b)*100)+'%':'0%';
+const mk=(id,type,data,opt,pl)=>new Chart(document.getElementById('cv-'+id),{type,data,options:opt,plugins:pl||[]});
+const lab={id:'lab',afterDatasetsDraw(c){const x=c.ctx;x.save();x.font='bold 12px Calibri,Arial';x.textAlign='center';x.textBaseline='middle';c.getDatasetMeta(0).data.forEach((b,i)=>{x.fillStyle='#fff';x.fillText(c.data.datasets[0].data[i],b.x,(b.y+b.base)/2)});c.getDatasetMeta(1).data.forEach((b,i)=>{x.fillStyle=RD;x.fillText(c.data.datasets[1].data[i],b.x,b.y-10)});x.restore()}};
+const stackData=id=>{const r=rows(id);return{labels:r.map(x=>id==='cctv'?[x[0],'Scope '+(n(x[1])+n(x[2])),pct(n(x[1]),n(x[2]))]:[x[0],pct(n(x[1]),n(x[2]))]),datasets:[{label:'Online',data:r.map(x=>n(x[1])),backgroundColor:BL,barThickness:24},{label:'Offline',data:r.map(x=>n(x[2])),backgroundColor:RD,barThickness:24}]}};
+const simple=(id,col)=>{const r=rows(id);return{labels:r.map(x=>x[0]),datasets:[{data:r.map(x=>n(x[1])),backgroundColor:col,borderRadius:4,barThickness:24}]}};
+const sc={x:{stacked:true,grid:{display:false}},y:{stacked:true,beginAtZero:true}};
+const pc=(a,b)=>b?Math.round(a/b*100):0;
+function renderCov(id){
+ const r=rows(id).map(x=>{const sc=n(x[1]),ni=n(x[2]),on=n(x[3]),off=n(x[4]);return{l:x[0],sc,ni,on,off,ig:on+off}});
+ const T=r.reduce((a,x)=>({sc:a.sc+x.sc,ni:a.ni+x.ni,on:a.on+x.on,off:a.off+x.off,ig:a.ig+x.ig}),{sc:0,ni:0,on:0,off:0,ig:0});
+ document.getElementById(id+'-sum').innerHTML=
+ `<div style="background:#0b1f3a;color:#fff"><small style="color:#cbd5e1">Scope (all facilities)</small><b>${T.sc}</b></div>`+
+ `<div><small>Not integrated</small><b>${T.ni}</b><em style="color:#5b6573">${pc(T.ni,T.sc)}%</em></div>`+
+ `<div style="background:#e6f1fb"><small>Online</small><b style="color:#2874f0">${T.on}</b><em style="color:#2874f0">${pc(T.on,T.ig)}%</em></div>`+
+ `<div style="background:#fdecec"><small>Offline</small><b style="color:#e34948">${T.off}</b><em style="color:#e34948">${pc(T.off,T.ig)}%</em></div>`;
+ document.getElementById(id+'-rows').innerHTML=r.map(x=>{const t=(x.on+x.off+x.ni)||1,w=v=>v/t*100;
+  const seg=(v,c,cl)=>v?`<span class="${cl||''}" style="width:${w(v)}%;background:${c}">${w(v)>=7?v:''}</span>`:'';
+  return `<div class="rw"><div class="nm">${x.l}</div><div><div class="bar">${seg(x.on,'#2874f0')}${seg(x.off,'#e34948')}${seg(x.ni,'','ni')}</div>
+  <div class="st"><span>Scope <b>${x.sc}</b></span><span>Not integrated <b>${x.ni}</b> (${pc(x.ni,x.sc)}%)</span><span>Online <b>${x.on}</b> (${pc(x.on,x.ig)}%)</span><span>Offline <b>${x.off}</b> (${pc(x.off,x.ig)}%)</span></div></div>
+  <div class="pc"><b>${pc(x.on,x.ig)}%</b> online<small>${pc(x.off,x.ig)}% offline</small></div></div>`}).join('');
+}
+['cctv','ids'].forEach(id=>{renderCov(id);document.getElementById('t-'+id).addEventListener('input',()=>renderCov(id))});
+function renderAudit(){
+ const r=rows('audit').map(x=>({z:x[0],v:n(x[1])})),T=r.reduce((a,x)=>a+x.v,0),mx=Math.max(...r.map(x=>x.v),1),top=r.reduce((a,x)=>x.v>a.v?x:a,{z:'-',v:0});
+ document.getElementById('au-total').innerHTML=`<small style="color:#cbd5e1">Total audits</small><b>${T}</b>`;
+ const PAL=['#2874f0','#eb6834','#1baf7a','#6250d6','#eda100','#e87ba4','#008300','#e34948'];
+ document.getElementById('au-bars').innerHTML=r.map((x,i)=>`<div class="vc"><b>${x.v}</b><div class="vbar" style="height:${Math.round(x.v/mx*Math.max(80,(document.getElementById("au-bars").clientHeight||140)-48))}px;background:${PAL[i%PAL.length]}"></div><span>${x.z}</span><small>${pc(x.v,T)}%</small></div>`).join('');
+}
+window.addEventListener('resize',()=>renderAudit());renderAudit();document.getElementById('t-audit').addEventListener('input',renderAudit);
+const trTotal=()=>{document.getElementById('tr-total').innerHTML=`<small style="color:#cbd5e1">Total travellers</small><b>${rows('trav').reduce((a,x)=>a+n(x[1]),0)}</b>`};
+trTotal();document.getElementById('t-trav').addEventListener('input',trTotal);
+const fi=document.getElementById('ft-img'),fp=document.getElementById('ft-ph'),fr=document.getElementById('ft-rm');
+document.getElementById('ft-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{fi.src=r.result;fi.style.display='block';fp.style.display='none';fr.style.display='inline-block'};r.readAsDataURL(f)});
+fr.addEventListener('click',()=>{fi.removeAttribute('src');fi.style.display='none';fp.style.display='block';fr.style.display='none';document.getElementById('ft-file').value=''});
+document.getElementById('lg-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const i=document.getElementById('lg-img');i.src=r.result;i.style.display='block';document.getElementById('lg-ph').style.display='none'};r.readAsDataURL(f)});
+const tv={id:'tv',afterDatasetsDraw(c){const x=c.ctx;x.save();x.fillStyle='#0b1f3a';x.font='bold 14px Calibri,Arial,sans-serif';x.textAlign='left';x.textBaseline='middle';c.getDatasetMeta(0).data.forEach((b,i)=>x.fillText(c.data.datasets[0].data[i],b.x+8,b.y));x.restore()}};
+const C={
+ trav:mk('trav','bar',simple('trav',AQ),{...base,indexAxis:'y',layout:{padding:{right:28}},scales:{y:{grid:{display:false}},x:{beginAtZero:true,ticks:{precision:0}}}},[tv])};
+const upd=id=>{const c=C[id];c.data=(id==='cctv'||id==='ids')?stackData(id):simple(id,id==='trav'?AQ:BL);c.update()};
+Object.keys(C).forEach(id=>document.getElementById('t-'+id).addEventListener('input',()=>upd(id)));
+
+</script><script>
+(function(){
+const norm=t=>t.toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').trim();
+const AL={'odisha':['orissa'],'uttarakhand':['uttaranchal'],'puducherry':['pondicherry'],'delhi':['new delhi','nct'],'west bengal':['bengal'],'jammu and kashmir':['jammu','kashmir','j k'],'dadra and nagar haveli and daman and diu':['daman','diu','dadra','nagar haveli'],'andaman and nicobar islands':['andaman','nicobar'],'chhattisgarh':['chattisgarh'],'telangana':['telengana'],'tamil nadu':['tamilnadu']};
+const HI=/vip|protest|bandh/i,WA=/traffic|diversion|divert/i;
+const COL={3:'#e34948',2:'#f4c20d',1:'#2874f0'};
+const RC={north:'#2874f0',east:'#26a541',west:'#fb641b',south:'#7b3fe4'},RT={north:'#d3e3fd',east:'#d2efda',west:'#fedcca',south:'#e0d3f9'};
+const RG={north:['jammu and kashmir','ladakh','himachal pradesh','punjab','haryana','delhi','chandigarh','uttarakhand','uttar pradesh','rajasthan'],west:['gujarat','maharashtra','goa','dadra and nagar haveli and daman and diu','madhya pradesh','chhattisgarh'],east:['bihar','jharkhand','odisha','west bengal','assam','arunachal pradesh','nagaland','manipur','mizoram','tripura','meghalaya','sikkim','andaman and nicobar islands'],south:['andhra pradesh','telangana','karnataka','kerala','tamil nadu','puducherry','lakshadweep']};
+const REG={};Object.keys(RG).forEach(r=>RG[r].forEach(k=>REG[k]=r));
+function ntParse(text,keys){
+ const out={};
+ text.split('\n').forEach(raw=>{
+  const line=raw.trim();if(!line)return;
+  const n=' '+norm(line)+' ',lv=HI.test(line)?3:WA.test(line)?2:1;
+  keys.forEach(k=>{
+   if([k].concat(AL[k]||[]).some(a=>n.indexOf(' '+a+' ')>-1)){
+    const o=out[k]||(out[k]={level:0,notes:[]});
+    o.level=Math.max(o.level,lv);o.notes.push(line);
+   }
+  });
+ });
+ return out;
+}
+window.ntParse=ntParse;
+const box=document.getElementById('nt-map');
+if(!window.d3||!window.topojson){box.textContent='Map library could not load. Check your internet connection.';return}
+box.textContent='Loading map...';
+d3.json('https://cdn.jsdelivr.net/gh/udit-001/india-maps-data@2884453/topojson/india.json').then(topo=>{
+ const gs=topo.objects.districts.geometries;
+ const states=[...d3.group(gs,g=>g.properties.st_nm)].map(([name,arr])=>({name,key:norm(name),geometry:topojson.merge(topo,arr)}));
+ const feats=states.map(s=>({type:'Feature',properties:{key:s.key,name:s.name},geometry:s.geometry}));
+ const W=520,H=560,path=d3.geoPath(d3.geoMercator().fitSize([W,H],{type:'FeatureCollection',features:feats}));
+ box.textContent='';
+ const svg=d3.select(box).append('svg').attr('viewBox','0 0 '+W+' '+H).attr('width','100%');
+ const P=svg.append('g').selectAll('path').data(feats).join('path').attr('d',path).attr('fill','#e6e9ef').attr('stroke','#fff').attr('stroke-width',0.8).style('transition','fill .25s');
+ P.append('title').text(d=>d.properties.name);
+ const L=svg.append('g').style('pointer-events','none');
+ const src=document.querySelector('.mp-r ul');
+ function update(){
+  const keys=states.map(s=>s.key),hitAll=ntParse(src.innerText,keys);
+  P.attr('fill',d=>REG[d.properties.key]?(hitAll[d.properties.key]?RC[REG[d.properties.key]]:RT[REG[d.properties.key]]):'#e6e9ef').attr('stroke',d=>hitAll[d.properties.key]?'#0b1f3a':'#fff').attr('stroke-width',d=>hitAll[d.properties.key]?1.4:0.8);
+  P.filter(d=>hitAll[d.properties.key]).raise();
+  const onAll=feats.filter(d=>hitAll[d.properties.key]);
+  L.selectAll('text').data(onAll,d=>d.properties.key).join('text').attr('transform',d=>'translate('+path.centroid(d)+')').attr('text-anchor','middle').attr('font-size',12).attr('font-weight',700).attr('fill','#0b1f3a').attr('stroke','#fff').attr('stroke-width',3).attr('paint-order','stroke').text(d=>d.properties.name);
+ }
+ src.addEventListener('input',update);update();
+}).catch(()=>{box.textContent='Map data could not load. Check your internet connection.'});
+})();
+</script>
+<script>
+(function(){
+const bc=document.getElementById('b-copy'),bd=document.getElementById('b-dl');
+async function snap(){
+ if(!window.html2canvas)throw new Error('lib');
+ return html2canvas(document.getElementById('shot'),{scale:2,backgroundColor:'#f1f3f6',useCORS:true,onclone:d=>{
+  d.querySelectorAll('.tb,.noshot,details.ed,#lg-ph,.fb,#ft-ph,#ft label,#ft button,#nt-txt').forEach(e=>e.remove());
+  d.querySelectorAll('.kpi .k').forEach(k=>{const P=(e,p,v)=>e.style.setProperty(p,v,'important');P(k,'background','#ffffff');P(k,'box-shadow','none');P(k,'border','1px solid #d5dae3');P(k,'border-top','4px solid #2874f0');P(k,'border-bottom','6px solid #c3cfe6');P(k,'text-shadow','none');P(k,'color','#172337');k.querySelectorAll('*').forEach(e=>P(e,'text-shadow','none'))});
+  d.querySelectorAll('header').forEach(h=>{h.style.setProperty('box-shadow','none','important')});
+  const i=d.getElementById('ft-img');if(!i||i.style.display==='none'){const f=d.getElementById('ft');if(f)f.remove()}
+ }});
+}
+const say=(b,t)=>{const o=b.dataset.o||b.textContent;b.dataset.o=o;b.textContent=t;setTimeout(()=>b.textContent=o,2200)};
+const save=blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='FSCC_DCC_Weekly_Update.png';a.click()};
+bd.addEventListener('click',async()=>{try{const c=await snap();c.toBlob(save);say(bd,'Downloaded')}catch(e){say(bd,'Needs internet')}});
+bc.addEventListener('click',async()=>{try{const c=await snap();c.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);say(bc,'Copied. Paste in WhatsApp')}catch(e){save(b);say(bc,'Copy blocked, downloaded')}})}catch(e){say(bc,'Needs internet')}});
+})();
+</script>
+<script>
+(function(){const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],d=new Date(),t='As of '+String(d.getDate()).padStart(2,'0')+' '+M[d.getMonth()];
+document.querySelectorAll('.asof').forEach(e=>e.textContent=t)})();
+</script>
+<script>
+(function(){
+['cctv','ids','audit','trav'].forEach(function(id){
+ var t=document.getElementById('t-'+id);if(!t)return;
+ var tb=t.tBodies[0];
+ t.tHead.rows[0].appendChild(document.createElement('th'));
+ function mk(tr){var td=document.createElement('td');td.innerHTML='<button type="button" class="rmr" title="Remove row" aria-label="Remove row">&times;</button>';tr.appendChild(td)}
+ [].forEach.call(tb.rows,mk);
+ var add=document.createElement('button');add.type='button';add.className='addr';add.textContent='+ Add row';t.parentNode.insertBefore(add,t.nextSibling);
+ function fire(){t.dispatchEvent(new Event('input',{bubbles:true}))}
+ t.addEventListener('click',function(e){var b=e.target.closest('.rmr');if(!b||tb.rows.length<=1)return;b.closest('tr').remove();fire()});
+ add.addEventListener('click',function(){var n=tb.rows[0].cells.length-1,tr=document.createElement('tr');
+  for(var i=0;i<n;i++){var td=document.createElement('td');td.contentEditable='true';td.textContent=i?'0':'New';tr.appendChild(td)}
+  mk(tr);tb.appendChild(tr);fire();tr.cells[0].focus()});
+});
+})();
+</script>
+<script>
+(function(){
+var sh=document.getElementById('shot'),lv=['M','L','XL'],nm=['Normal','Large','Extra large'],i=0;
+function setFs(n){i=Math.max(0,Math.min(2,n));if(i)sh.setAttribute('data-fs',lv[i]);else sh.removeAttribute('data-fs');document.getElementById('fs-l').textContent=nm[i]}
+document.getElementById('fs-').addEventListener('click',function(){setFs(i-1)});
+document.getElementById('fs+').addEventListener('click',function(){setFs(i+1)});
+var TH={blue:null,green:['#0b3d2a','#0f9d58'],purple:['#26125c','#6a3de8'],orange:['#4d1a05','#fb641b'],grey:['#111827','#4b5563']};
+var st=document.createElement('style');st.id='theme-css';document.head.appendChild(st);
+document.getElementById('theme').addEventListener('change',function(e){var t=TH[e.target.value];
+ if(!t){st.textContent='';return}
+ st.textContent='header{background:linear-gradient(90deg,'+t[0]+' 0%,'+t[1]+' 100%)!important}.c{border-top-color:'+t[1]+'!important}.cs div[style*="background:#2874f0"],.cs div[style*="background:#0b1f3a"]{background:'+t[1]+'!important}.kpi .k:nth-child(n){border-top-color:'+t[1]+'!important}.kpi .k:nth-child(n) i{color:'+t[1]+'!important}.fb,.addr{color:'+t[1]+'!important;border-color:'+t[1]+'!important}'});
+})();
+</script>
+</body></html>
