@@ -7,7 +7,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.3.0/dist/tabler-icons.min.css">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f1f3f6;font-family:Calibri,Arial,sans-serif;color:#0b1f3a}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{background:#f1f3f6;font-family:Calibri,Arial,sans-serif;color:#0b1f3a}
 header{background:#0b1f3a;color:#fff;padding:10px 24px;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px}
 main{padding:14px;max-width:1400px;margin:auto}
 .g{display:grid;gap:12px;margin-bottom:12px}.g4{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.g2{grid-template-columns:.85fr 1.5fr}
@@ -194,6 +196,223 @@ header{background:linear-gradient(90deg,#0f1c33 0%,#1b3f8f 60%,#2874f0 100%)!imp
 #sync-badge.synced{background:#dcfce7;color:#15803d}
 #sync-badge.saving{background:#fef9c3;color:#854d0e}
 #sync-badge.error{background:#fee2e2;color:#b91c1c}
+
+/* =====================================================================
+   MOBILE & TOUCH SCREEN RESPONSIVE STYLES
+   ===================================================================== */
+@media (max-width: 900px) {
+  #shot {
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  main {
+    padding: 8px !important;
+  }
+  header {
+    min-height: auto !important;
+    padding: 10px 14px !important;
+    font-size: 18px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  #hdr-title {
+    font-size: 18px !important;
+    line-height: 1.25;
+  }
+  .tb {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .tb > span {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  .ctl {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  .fb {
+    padding: 6px 10px !important;
+    margin: 2px !important;
+    font-size: 12px !important;
+  }
+
+  /* KPI Cards: 2 Columns on Phone */
+  .kpi {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  .k {
+    white-space: normal !important;
+    padding: 6px 4px !important;
+  }
+  .k .r {
+    gap: 4px !important;
+    font-size: 12px !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .kpi .k:nth-child(n) b {
+    font-size: 18px !important;
+  }
+  .kpi .k:nth-child(n) .s {
+    font-size: 10.5px !important;
+    padding: 2px 6px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Complete Vertical Flow for Mobile */
+  .lay2 {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+    gap: 10px !important;
+  }
+  .lay2 > *, .a-c3, .a-c3 > * {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+  }
+  .a-c3 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  /* CCTV & IDS summary 2x2 grids */
+  #cctv-sum, #ids-sum {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  #cctv-sum div, #ids-sum div {
+    padding: 6px 8px !important;
+  }
+
+  /* Progress rows */
+  .rw {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    padding: 8px 0 !important;
+  }
+  .rw .nm {
+    font-size: 15px !important;
+  }
+  .pc {
+    text-align: left !important;
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 8px !important;
+  }
+  .pc small {
+    display: inline-block !important;
+  }
+
+  /* Major Highlights stacked */
+  .hl.a-hl {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .hb ol {
+    columns: 1 !important;
+    padding-left: 18px !important;
+  }
+
+  /* Major Events & D3 Map Responsive */
+  .ntw {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+    height: auto !important;
+    position: static !important;
+    margin-top: 6px !important;
+  }
+  .mprow {
+    flex-direction: column !important;
+    position: static !important;
+    width: 100% !important;
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }
+  .mprow .mp {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .ntw > .mapwrap {
+    position: relative !important;
+    height: auto !important;
+    width: 100% !important;
+  }
+  #nt-map {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    height: 380px !important;
+    width: 100% !important;
+    min-height: 320px !important;
+  }
+  #nt-map svg {
+    max-height: 380px !important;
+    height: auto !important;
+    width: 100% !important;
+  }
+  .mlg {
+    position: absolute !important;
+    bottom: 6px !important;
+    right: 6px !important;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+
+  /* Code Red Stack */
+  .cr {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .b {
+    min-height: auto !important;
+    padding: 10px !important;
+  }
+  .b .n {
+    font-size: 26px !important;
+  }
+
+  /* Horizontal Scrolling for Data Tables on touch devices */
+  details.ed {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  details.ed table {
+    min-width: 280px;
+  }
+  th, td {
+    padding: 6px 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    font-size: 16px !important;
+  }
+  .kpi {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .k .r b {
+    font-size: 16px !important;
+  }
+  #nt-map {
+    height: 320px !important;
+  }
+}
 </style></head><body>
 <div id="shot">
 <header><span id="hdr-title" contenteditable>FSCC+DCC+Resilience Weekly Update</span><label class="lg2" title="Click to upload or change logo"><img id="lg-img" alt="Logo" style="display:none;height:40px;width:auto"><span id="lg-ph">Upload logo</span><input type="file" id="lg-file" accept="image/*" hidden></label></header>
@@ -288,9 +507,9 @@ header{background:linear-gradient(90deg,#0f1c33 0%,#1b3f8f 60%,#2874f0 100%)!imp
 
 <script>
 /* =====================================================================
-   GOOGLE APPS SCRIPT WEB APP URL (ALREADY CONFIGURED):
+   GOOGLE APPS SCRIPT WEB APP URL (UPDATED):
    ===================================================================== */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/a/macros/flipkart.com/s/AKfycbzVbTm05jdqin3ISC2Y7CgSsKakOiwt1G4k0YvjeUtrgtwRCQvRm8DNaPm00-Px17NOPQ/exec"; 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/a/macros/flipkart.com/s/AKfycbxV539ntn-gdG2A-zmyL4oEQmk67d8QqygSB8ZrG63WkPBVUWWHORVT-rhoiWHXkZC2Kg/exec";
 
 const BL='#2874f0',RD='#e34948',AQ='#1baf7a';
 const rows=id=>[...document.querySelectorAll('#t-'+id+' tbody tr')].map(r=>[...r.cells].filter(c=>!c.querySelector('.rmr')).map(c=>c.textContent.trim()));
@@ -436,12 +655,14 @@ document.getElementById('theme').addEventListener('change',function(e){
 
 <script>
 /* =====================================================================
-   GOOGLE SHEETS CLOUD STORAGE ENGINE
+   GOOGLE SHEETS CLOUD STORAGE ENGINE (REAL-TIME SYNC & AUTO-REFRESH)
    ===================================================================== */
 const LOCAL_STORAGE_KEY = "FSCC_DCC_DATA_LOCAL_BACKUP";
+let isCurrentlyEditing = false;
 
 function setSyncStatus(state, msg){
   const badge = document.getElementById('sync-badge');
+  if(!badge) return;
   badge.className = state;
   badge.textContent = msg;
 }
@@ -487,7 +708,7 @@ function collectData(){
     footer: document.getElementById('ft-img').src || "",
     theme: document.getElementById('theme').value,
     fontSize: fsIndex,
-    lastSaved: new Date().toISOString()
+    lastSaved: new Date().getTime()
   };
 }
 
@@ -594,7 +815,7 @@ async function saveToCloud(){
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     });
-    setSyncStatus('synced', '☁️ Saved to Google Sheet');
+    setSyncStatus('synced', '☁️ Saved to Cloud');
     setTimeout(()=>setSyncStatus('synced', '☁️ Synced'), 3000);
   } catch(err) {
     console.error('Save failed', err);
@@ -602,35 +823,49 @@ async function saveToCloud(){
   }
 }
 
-async function loadFromCloud(){
-  const local = localStorage.getItem(LOCAL_STORAGE_KEY);
-  if(local){
-    try { applyData(JSON.parse(local)); } catch(e){}
-  }
+async function loadFromCloud(isAutoPoll = false){
+  if(isAutoPoll && isCurrentlyEditing) return;
 
-  setSyncStatus('saving', '☁️ Fetching latest data...');
+  if(!isAutoPoll) setSyncStatus('saving', '☁️ Fetching latest data...');
   try {
-    const res = await fetch(GOOGLE_SCRIPT_URL);
+    const res = await fetch(GOOGLE_SCRIPT_URL + '?t=' + Date.now());
     const data = await res.json();
     if(data && Object.keys(data).length > 0){
-      applyData(data);
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-      setSyncStatus('synced', '☁️ Synced with Google Sheet');
+      const local = localStorage.getItem(LOCAL_STORAGE_KEY);
+      const localParsed = local ? JSON.parse(local) : null;
+      
+      if(!localParsed || !localParsed.lastSaved || (data.lastSaved && data.lastSaved >= localParsed.lastSaved) || !isAutoPoll){
+        applyData(data);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+      }
+      setSyncStatus('synced', '☁️ Live & Synced');
     } else {
       setSyncStatus('synced', '☁️ Ready (Sheet empty)');
     }
   } catch(err) {
-    console.error('Cloud load failed', err);
-    setSyncStatus('error', '⚠️ Offline (Showing local copy)');
+    if(!isAutoPoll) {
+      console.error('Cloud load failed', err);
+      setSyncStatus('error', '⚠️ Offline (Showing local copy)');
+    }
   }
 }
 
 let autoSaveTimer = null;
 function autoSaveCloud(){
   clearTimeout(autoSaveTimer);
-  setSyncStatus('saving', '☁️ Changes detected...');
+  setSyncStatus('saving', '☁️ Saving changes...');
   autoSaveTimer = setTimeout(saveToCloud, 2000);
 }
+
+document.addEventListener('focusin', (e)=>{
+  if(e.target.isContentEditable || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT'){
+    isCurrentlyEditing = true;
+  }
+});
+
+document.addEventListener('focusout', ()=>{
+  isCurrentlyEditing = false;
+});
 
 document.addEventListener('input', (e)=>{
   if(e.target.isContentEditable || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT'){
@@ -654,6 +889,10 @@ const saveFile=blob=>{const a=document.createElement('a');a.href=URL.createObjec
 bd.addEventListener('click',async()=>{try{const c=await snap();c.toBlob(saveFile);say(bd,'Downloaded')}catch(e){say(bd,'Needs internet')}});
 bc.addEventListener('click',async()=>{try{const c=await snap();c.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);say(bc,'Copied')}catch(e){saveFile(b);say(bc,'Downloaded')}})}catch(e){say(bc,'Needs internet')}});
 
-window.addEventListener('DOMContentLoaded', loadFromCloud);
+// Initial Load & Auto-Poll Every 15 Seconds
+window.addEventListener('DOMContentLoaded', () => {
+  loadFromCloud(false);
+  setInterval(() => loadFromCloud(true), 15000);
+});
 </script>
 </body></html>
