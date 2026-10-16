@@ -436,7 +436,7 @@ header{background:linear-gradient(90deg,#0f1c33 0%,#1b3f8f 60%,#2874f0 100%)!imp
   <button class="fb save-btn" id="b-cloud-save">💾 Save to Cloud</button>
   <button class="fb" id="b-copy">Copy image</button>
   <button class="fb" id="b-dl">Download PNG</button>
-  <span id="sync-badge">☁️ Initializing...</span>
+  <span id="sync-badge">⚡ Real-time active</span>
  </span>
 </div>
 <div class="lay2">
@@ -507,7 +507,7 @@ header{background:linear-gradient(90deg,#0f1c33 0%,#1b3f8f 60%,#2874f0 100%)!imp
 
 <script>
 /* =====================================================================
-   GOOGLE APPS SCRIPT WEB APP URL (UPDATED):
+   GOOGLE APPS SCRIPT WEB APP URL (REAL-TIME ENGINE)
    ===================================================================== */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/a/macros/flipkart.com/s/AKfycbxV539ntn-gdG2A-zmyL4oEQmk67d8QqygSB8ZrG63WkPBVUWWHORVT-rhoiWHXkZC2Kg/exec";
 
@@ -655,10 +655,22 @@ document.getElementById('theme').addEventListener('change',function(e){
 
 <script>
 /* =====================================================================
-   GOOGLE SHEETS CLOUD STORAGE ENGINE (REAL-TIME SYNC & AUTO-REFRESH)
+   REAL-TIME CLOUD ENGINE (INSTANT MULTI-TAB & 3-SECOND CLOUD SYNC)
    ===================================================================== */
 const LOCAL_STORAGE_KEY = "FSCC_DCC_DATA_LOCAL_BACKUP";
 let isCurrentlyEditing = false;
+let isFetching = false;
+
+// 1. Instant Tab-to-Tab Synchronization
+let syncChannel = null;
+try {
+  syncChannel = new BroadcastChannel('fscc_realtime_channel');
+  syncChannel.onmessage = (event) => {
+    if(event.data && !isCurrentlyEditing){
+      applyData(event.data);
+    }
+  };
+} catch(e) {}
 
 function setSyncStatus(state, msg){
   const badge = document.getElementById('sync-badge');
@@ -806,8 +818,9 @@ function applyData(data){
 async function saveToCloud(){
   const payload = collectData();
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload));
+  if(syncChannel) syncChannel.postMessage(payload);
 
-  setSyncStatus('saving', '☁️ Saving to Sheet...');
+  setSyncStatus('saving', '⚡ Syncing...');
   try {
     await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
@@ -815,18 +828,18 @@ async function saveToCloud(){
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     });
-    setSyncStatus('synced', '☁️ Saved to Cloud');
-    setTimeout(()=>setSyncStatus('synced', '☁️ Synced'), 3000);
+    setSyncStatus('synced', '⚡ Live (Synced)');
   } catch(err) {
     console.error('Save failed', err);
-    setSyncStatus('error', '❌ Cloud save error');
+    setSyncStatus('error', '❌ Sync error');
   }
 }
 
 async function loadFromCloud(isAutoPoll = false){
-  if(isAutoPoll && isCurrentlyEditing) return;
+  if(isCurrentlyEditing || isFetching) return;
+  isFetching = true;
 
-  if(!isAutoPoll) setSyncStatus('saving', '☁️ Fetching latest data...');
+  if(!isAutoPoll) setSyncStatus('saving', '⚡ Connecting...');
   try {
     const res = await fetch(GOOGLE_SCRIPT_URL + '?t=' + Date.now());
     const data = await res.json();
@@ -838,23 +851,21 @@ async function loadFromCloud(isAutoPoll = false){
         applyData(data);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
       }
-      setSyncStatus('synced', '☁️ Live & Synced');
-    } else {
-      setSyncStatus('synced', '☁️ Ready (Sheet empty)');
+      setSyncStatus('synced', '⚡ Real-time active');
     }
   } catch(err) {
-    if(!isAutoPoll) {
-      console.error('Cloud load failed', err);
-      setSyncStatus('error', '⚠️ Offline (Showing local copy)');
-    }
+    if(!isAutoPoll) setSyncStatus('error', '⚠️ Offline');
+  } finally {
+    isFetching = false;
   }
 }
 
 let autoSaveTimer = null;
 function autoSaveCloud(){
   clearTimeout(autoSaveTimer);
-  setSyncStatus('saving', '☁️ Saving changes...');
-  autoSaveTimer = setTimeout(saveToCloud, 2000);
+  setSyncStatus('saving', '⚡ Syncing...');
+  // 800ms debounce: Saves immediately right after you finish typing
+  autoSaveTimer = setTimeout(saveToCloud, 800);
 }
 
 document.addEventListener('focusin', (e)=>{
@@ -865,6 +876,7 @@ document.addEventListener('focusin', (e)=>{
 
 document.addEventListener('focusout', ()=>{
   isCurrentlyEditing = false;
+  saveToCloud(); // Save instantly on field exit
 });
 
 document.addEventListener('input', (e)=>{
@@ -889,10 +901,10 @@ const saveFile=blob=>{const a=document.createElement('a');a.href=URL.createObjec
 bd.addEventListener('click',async()=>{try{const c=await snap();c.toBlob(saveFile);say(bd,'Downloaded')}catch(e){say(bd,'Needs internet')}});
 bc.addEventListener('click',async()=>{try{const c=await snap();c.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);say(bc,'Copied')}catch(e){saveFile(b);say(bc,'Downloaded')}})}catch(e){say(bc,'Needs internet')}});
 
-// Initial Load & Auto-Poll Every 15 Seconds
+// Real-Time 3-Second Poll Loop
 window.addEventListener('DOMContentLoaded', () => {
   loadFromCloud(false);
-  setInterval(() => loadFromCloud(true), 15000);
+  setInterval(() => loadFromCloud(true), 3000); // Polls every 3 seconds for near-instant updates
 });
 </script>
 </body></html>
